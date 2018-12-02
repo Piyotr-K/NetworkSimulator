@@ -1,10 +1,14 @@
 #!/usr/bin/python
 
 from socket import *
+from packet import Packet
+import pickle
 
-portc = 8000
 host = "localhost"
+portc = 8000
 ports = 8001
+bufsize = 1024
+packetList = []
 
 sockobjc = socket(AF_INET, SOCK_DGRAM)
 sockobjs = socket(AF_INET, SOCK_DGRAM)
@@ -12,17 +16,28 @@ sockobjc.bind(("", portc))
 sockobjs.bind(("", 0))
 
 print("Network")
-
 print("Waiting on traffic from: ", portc, "& ", ports)
 
-datac, addrc = sockobjc.recvfrom(1024)
-print("\nReceived: ", datac, "From: ", addrc)
+datac, addrc = sockobjc.recvfrom(bufsize)
 
-sockobjs.sendto(datac, (host, ports))
-print("\nSent: ", "Network -> Server", "To: ", host, ports)
+while (datac):
+    packet = pickle.loads(datac)
+    if packet.getPacketType() == "EOT":
+        for pckt in packetList:
+            sockobjs.sendto(pickle.dumps(pckt), (host, ports))
+        break
+    else:
+        packetList.append(packet)
+        datac, addrc = sockobjc.recvfrom(bufsize)
 
-datas, addrs = sockobjs.recvfrom(1024)
-print("\nReceived: ", datas, "From: ", addrs)
+#print packet.getData()
+#print("\nReceived: ", datac, "From: ", addrc)
 
-sockobjc.sendto(b"Ack From Network", addrc)
-print("\nSent: ", "Network -> Client", "To: ", addrc)
+#sockobjs.sendto(datac, (host, ports))
+#print("\nSent: ", "Network -> Server", "To: ", host, ports)
+
+##datas, addrs = sockobjs.recvfrom(bufsize)
+#print("\nReceived: ", datas, "From: ", addrs)
+
+##sockobjc.sendto(b"Ack From Network", addrc)
+#print("\nSent: ", "Network -> Client", "To: ", addrc)
