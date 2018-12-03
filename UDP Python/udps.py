@@ -11,7 +11,7 @@ bufsize = 1024
 sockobj = socket(AF_INET, SOCK_DGRAM)
 sockobj.bind(("", port))
 
-#print("Server")
+print("Server")
 
 print("waiting on port:", port)
 f = open("hello1.txt", 'w')
@@ -23,9 +23,10 @@ while (data):
     f.write(packet.getData().decode('utf-8'))
     data, addr = sockobj.recvfrom(bufsize)
 
+f.close()
+sockobj.sendto(b'Ack From Server', addr)
+
 #print("\nReceived: ", data, "From: ", addr)
 
 #print("finished writing to file.")
-f.close()
-sockobj.sendto(b'Ack From Server', addr)
 #print("\nSent: ", "Server -> Network", "To: ", addr)

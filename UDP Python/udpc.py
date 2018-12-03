@@ -12,7 +12,7 @@ seqnum = 0
 sockobj = socket(AF_INET, SOCK_DGRAM)
 sockobj.bind(("", 0))
 
-#print("Client")
+print("Client")
 
 f=open("hello.txt","rb")
 data = f.read(bufsize)
@@ -30,8 +30,6 @@ while (data):
 packet = Packet("EOT", seqnum, "EOT", 65507, 1)
 packetStr = pickle.dumps(packet)
 sockobj.sendto(packetStr, (host, port))
-
-
 f.close()
 
 #sockobj.sendto(data, (host, port))
