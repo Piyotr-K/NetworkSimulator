@@ -46,8 +46,7 @@ while (data):
             print ack.getAckNum()
             ackList.append(ack)
             data, addr = sockobj.recvfrom(bufsize)
-            if (data == "breakpl0x"):
-                print "hi"
+            if (data == "EOT"):
                 break
         for pckt in packetList:
             ackFound = 0

@@ -39,7 +39,7 @@ while (datac):
                 break
         for acks in ackList:
             sockobjc.sendto(pickle.dumps(acks), addrc)
-        sockobjc.sendto("breakpl0x", addrc)
+        sockobjc.sendto("EOT", addrc)
     datac, addrc = sockobjc.recvfrom(bufsize)
 
 #print packet.getData()
