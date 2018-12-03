@@ -3,6 +3,7 @@
 from socket import *
 from packet import Packet
 import pickle
+from sys import getsizeof
 
 host = "localhost"
 portc = 8000
@@ -34,10 +35,10 @@ while (datac):
             ack = pickle.loads(datas)
             ackList.append(ack)
             datas, addrs = sockobjs.recvfrom(bufsize)
-        print "hi"
+            if (datas == "breakpl0x"):
+                break
         for acks in ackList:
             sockobjc.sendto(pickle.dumps(acks), (host, portc))
-
     datac, addrc = sockobjc.recvfrom(bufsize)
 
 #print packet.getData()

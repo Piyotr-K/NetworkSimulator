@@ -41,8 +41,8 @@ while (data):
     else:
         amountSent = 0
         data, addr = sockobj.recvfrom(bufsize)
+        print "hi"
         while (data):
-            print "hi"
             ack = pickle.loads(data)
             print ack.getAckNum()
             ackList.append(ack)
