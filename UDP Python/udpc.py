@@ -8,7 +8,7 @@ from sys import getsizeof
 host = "localhost"
 port = 8000
 bufsize = 512
-seqnum = 0
+seqnum = 1
 windowSize = 5157
 amountSent = 0
 packetList = []
@@ -22,9 +22,10 @@ sockobj.bind(("", 0))
 f=open("hello.txt","rb")
 data = f.read(bufsize)
 seqnum += getsizeof(data)
-packet = Packet("Data", 1, data, 1)
+packet = Packet("Data", seqnum, data, 1)
 packetStr = pickle.dumps(packet)
 packetList.append(packet)
+
 while (data):
     if (amountSent + getsizeof(packetStr) <= windowSize):
         if(sockobj.sendto(packetStr, (host, port))):
@@ -41,6 +42,7 @@ while (data):
         amountSent = 0
         data, addr = sockobj.recvfrom(bufsize)
         while (data):
+            print "hi"
             ack = pickle.loads(data)
             print ack.getAckNum()
             ackList.append(ack)
@@ -53,7 +55,6 @@ while (data):
             if (ackFound == 0):
                 packetStr = pickle.dumps(pckt)
                 sockobj.sendto(packetStr, (host, port))
-
 f.close()
 
 #sockobj.sendto(data, (host, port))

@@ -21,15 +21,14 @@ data, addr = sockobj.recvfrom(bufsize)
 
 while (data):
     packet = pickle.loads(data)
+    packetList.append(packet)
+    f.write(packet.getData().decode('utf-8'))
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
                 ack = Packet("ACK", 1, data, pckt.getSeqNum())
                 ackStr = pickle.dumps(ack)
                 sockobj.sendto(ackStr, addr)
-    packet = pickle.loads(data)
     print packet.getSeqNum()
-    packetList.append(packet)
-    f.write(packet.getData().decode('utf-8'))
     data, addr = sockobj.recvfrom(bufsize)
 
 

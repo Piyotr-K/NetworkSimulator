@@ -28,12 +28,16 @@ while (datac):
         for pckt in packetList:
             sockobjs.sendto(pickle.dumps(pckt), (host, ports))
             print pckt.getSeqNum()
+        packetList = []
         datas, addrs = sockobjs.recvfrom(bufsize)
         while (datas):
             ack = pickle.loads(datas)
             ackList.append(ack)
+            datas, addrs = sockobjs.recvfrom(bufsize)
+        print "hi"
         for acks in ackList:
             sockobjc.sendto(pickle.dumps(acks), (host, portc))
+
     datac, addrc = sockobjc.recvfrom(bufsize)
 
 #print packet.getData()
