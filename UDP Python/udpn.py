@@ -35,10 +35,11 @@ while (datac):
             ack = pickle.loads(datas)
             ackList.append(ack)
             datas, addrs = sockobjs.recvfrom(bufsize)
-            if (datas == "breakpl0x"):
+            if (datas == "EOT"):
                 break
         for acks in ackList:
-            sockobjc.sendto(pickle.dumps(acks), (host, portc))
+            sockobjc.sendto(pickle.dumps(acks), addrc)
+        sockobjc.sendto("breakpl0x", addrc)
     datac, addrc = sockobjc.recvfrom(bufsize)
 
 #print packet.getData()
