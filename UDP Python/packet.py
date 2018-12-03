@@ -1,9 +1,8 @@
 class Packet:
-    def __init__(self, packetType, SeqNum, Data, WindowSize, AckNum):
+    def __init__(self, packetType, SeqNum, Data, AckNum):
         self.packetType = packetType
         self.SeqNum = SeqNum
         self.packetData = Data
-        self.WindowSize = WindowSize
         self.AckNum = AckNum
 
     def getPacketType(self):
@@ -14,9 +13,6 @@ class Packet:
 
     def getData(self):
         return self.packetData
-
-    def getWindowSize(self):
-        return self.WindowSize
 
     def getAckNum(self):
         return self.AckNum

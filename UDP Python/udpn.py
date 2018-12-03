@@ -3,12 +3,14 @@
 from socket import *
 from packet import Packet
 import pickle
+from sys import getsizeof
 
 host = "localhost"
 portc = 8000
 ports = 8001
 bufsize = 1024
 packetList = []
+ackList = []
 
 sockobjc = socket(AF_INET, SOCK_DGRAM)
 sockobjs = socket(AF_INET, SOCK_DGRAM)
@@ -22,13 +24,22 @@ datac, addrc = sockobjc.recvfrom(bufsize)
 
 while (datac):
     packet = pickle.loads(datac)
-    if packet.getPacketType() == "EOT":
+    packetList.append(packet)
+    if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
             sockobjs.sendto(pickle.dumps(pckt), (host, ports))
-        break
-    else:
-        packetList.append(packet)
-        datac, addrc = sockobjc.recvfrom(bufsize)
+            print pckt.getSeqNum()
+        packetList = []
+        datas, addrs = sockobjs.recvfrom(bufsize)
+        while (datas):
+            ack = pickle.loads(datas)
+            ackList.append(ack)
+            datas, addrs = sockobjs.recvfrom(bufsize)
+            if (datas == "breakpl0x"):
+                break
+        for acks in ackList:
+            sockobjc.sendto(pickle.dumps(acks), (host, portc))
+    datac, addrc = sockobjc.recvfrom(bufsize)
 
 #print packet.getData()
 #print("\nReceived: ", datac, "From: ", addrc)
