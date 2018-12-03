@@ -41,12 +41,14 @@ while (data):
     else:
         amountSent = 0
         data, addr = sockobj.recvfrom(bufsize)
-        print "hi"
         while (data):
             ack = pickle.loads(data)
             print ack.getAckNum()
             ackList.append(ack)
             data, addr = sockobj.recvfrom(bufsize)
+            if (data == "breakpl0x"):
+                print "hi"
+                break
         for pckt in packetList:
             ackFound = 0
             for ack in ackList:
@@ -55,6 +57,11 @@ while (data):
             if (ackFound == 0):
                 packetStr = pickle.dumps(pckt)
                 sockobj.sendto(packetStr, (host, port))
+        if (ackFound == 0):
+            packet = Packet("EOT", 0, "", 1)
+            packetStr = pickle.dumps(packet)
+            sockobj.sendto(packetStr, (host, port))
+
 f.close()
 
 #sockobj.sendto(data, (host, port))

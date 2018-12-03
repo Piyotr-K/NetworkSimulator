@@ -28,7 +28,7 @@ while (data):
                 ack = Packet("ACK", 1, data, pckt.getSeqNum())
                 ackStr = pickle.dumps(ack)
                 sockobj.sendto(ackStr, addr)
-        sockobj.sendto("breakpl0x", addr)
+        sockobj.sendto("EOT", addr)
     print packet.getSeqNum()
     data, addr = sockobj.recvfrom(bufsize)
 
