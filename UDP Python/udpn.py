@@ -25,13 +25,14 @@ datac, addrc = sockobjc.recvfrom(bufsize)
 while (datac):
     packet = pickle.loads(datac)
     packetList.append(packet)
+    print packet.getSeqNum()
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
             sockobjs.sendto(pickle.dumps(pckt), (host, ports))
-            print pckt.getSeqNum()
         packetList = []
         datas, addrs = sockobjs.recvfrom(bufsize)
         while (datas):
+            print "hi"
             ack = pickle.loads(datas)
             ackList.append(ack)
             datas, addrs = sockobjs.recvfrom(bufsize)
@@ -39,8 +40,12 @@ while (datac):
                 break
         for acks in ackList:
             sockobjc.sendto(pickle.dumps(acks), addrc)
+        ackList = []
         sockobjc.sendto("EOT", addrc)
     datac, addrc = sockobjc.recvfrom(bufsize)
+
+f.close()
+
 
 #print packet.getData()
 #print("\nReceived: ", datac, "From: ", addrc)

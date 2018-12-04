@@ -15,24 +15,24 @@ sockobj.bind(("", port))
 #print("Server")
 
 print("waiting on port:", port)
-f = open("hello1.txt", 'w')
+f = open("test1.jpeg", 'wb')
 
 data, addr = sockobj.recvfrom(bufsize)
 
 while (data):
     packet = pickle.loads(data)
     packetList.append(packet)
-    f.write(packet.getData().decode('utf-8'))
+    f.write(packet.getData())
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
                 ack = Packet("ACK", 1, data, pckt.getSeqNum())
                 ackStr = pickle.dumps(ack)
                 sockobj.sendto(ackStr, addr)
+        packetList = []
         sockobj.sendto("EOT", addr)
-    print packet.getSeqNum()
     data, addr = sockobj.recvfrom(bufsize)
 
-
+f.close()
 
 #print("\nReceived: ", data, "From: ", addr)
 
