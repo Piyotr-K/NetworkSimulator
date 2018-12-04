@@ -62,6 +62,7 @@ while (data):
     else:
         amountSent = 0
         data, addr = sockobj.recvfrom(1024)
+        toResend = []
         while (data):
             ack = Packet.decode(Packet(), data)
             print 'Received Packet Type: ' + str(ack.getPacketType()) + ", Acknowledgement Number: " + str(ack.getAckNum())
@@ -72,15 +73,20 @@ while (data):
         for pckt in packetList:
             ackFound = 0
             for ack in ackList:
-                if (pckt.getSeqNum() == ack.getAckNum()):
+                if (str(pckt.getSeqNum()) == str(ack.getAckNum())):
                     ackFound = 1
                     break
             if (ackFound == 0):
-                packetStr = pckt.toString()
+                toResend.append(pckt)
+                
+        for x in range(0, len(toResend)):
+            if (x == len(toResend)):
+                toResend[x].setPacketType("EOT")
+                packetStr = toResend[x].toString()
                 sockobj.sendto(packetStr, (host, port))
-        if (ackFound == 0):
-            packet = Packet("EOT", 0, "", 1)
-            packetStr = packet.toString()
-            sockobj.sendto(packetStr, (host, port))
+            else:
+                packetStr = packetList[x].toString()
+                sockobj.sendto(packetStr, (host, port))
+        toResend = []
 
 f.close()

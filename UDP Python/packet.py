@@ -27,3 +27,6 @@ class Packet:
 
     def getAckNum(self):
         return self.AckNum
+
+    def setPacketType(self, type):
+        self.PacketType = type

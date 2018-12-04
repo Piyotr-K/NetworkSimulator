@@ -2,14 +2,12 @@
 
 from socket import *
 from packet import Packet
-import sys
 import pickle
 
 host = "localhost"
 port = 8001
 bufsize = 1024
 packetList = []
-
 sockobj = socket(AF_INET, SOCK_DGRAM)
 sockobj.bind(("", port))
 
@@ -32,7 +30,7 @@ while (data):
     f.write(packet.getData())
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
-            ack = Packet("ACK", 1, pckt.getData(), pckt.getSeqNum())
+            ack = Packet("ACK", 1, "", pckt.getSeqNum())
             ackStr = ack.toString()
             sockobj.sendto(ackStr, addr)
             print 'Sent Packet Type: ' + str(ack.getPacketType()) + ", Acknowledgement Number: " + str(ack.getAckNum())
