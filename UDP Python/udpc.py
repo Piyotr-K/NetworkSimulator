@@ -32,7 +32,11 @@ def openFile(filename):
         print 'File not found'
 
 if len(sys.argv) == 3:
+    host = sys.argv[1]
     openFile(sys.argv[2])
+elif len(sys.argv) == 2:
+    openFile(sys.argv[1])
+    print 'Using Default of localhost'
 
 data = f.read(bufsize)
 seqnum += getsizeof(data)
@@ -53,7 +57,6 @@ while (data):
                 packet = Packet("EOT", seqnum, data, 1)
             else:
                 packet = Packet("Data", seqnum, data, 1)
-            #packetList.append(packet)
             packetStr = packet.toString()
             prevPacketSize = getsizeof(packet.getData())
     else:

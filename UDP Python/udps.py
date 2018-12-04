@@ -2,6 +2,7 @@
 
 from socket import *
 from packet import Packet
+import sys
 import pickle
 
 host = "localhost"
@@ -17,6 +18,11 @@ sockobj.bind(("", port))
 print("waiting on port:", port)
 f = open("hello1.txt", 'wb')
 
+if len(sys.argv) == 2:
+    host = sys.argv[1]
+else:
+    print 'Using Default of localhost'
+
 data, addr = sockobj.recvfrom(bufsize)
 
 while (data):
@@ -26,10 +32,9 @@ while (data):
     f.write(packet.getData())
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
-            ack = Packet("ACK", 1, data, pckt.getSeqNum())
+            ack = Packet("ACK", 1, pckt.getData(), pckt.getSeqNum())
             ackStr = ack.toString()
             sockobj.sendto(ackStr, addr)
-            print ackStr
             print 'Sent Packet Type: ' + str(ack.getPacketType()) + ", Acknowledgement Number: " + str(ack.getAckNum())
         packetList = []
         sockobj.sendto("EOT", addr)

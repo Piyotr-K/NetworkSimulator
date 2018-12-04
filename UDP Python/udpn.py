@@ -4,6 +4,7 @@ from socket import *
 from packet import Packet
 import pickle
 from sys import getsizeof
+import sys
 
 host = "localhost"
 portc = 8000
@@ -19,6 +20,13 @@ sockobjs.bind(("", 0))
 
 print("Network")
 print("Waiting on traffic from: ", portc, "& ", ports)
+
+if len(sys.argv) == 3:
+    host = sys.argv[1]
+    print 'Random drop chance: ' + sys.argv[2]
+elif len(sys.argv) == 2:
+    print 'Random drop chance: ' + sys.argv[1]
+    print 'Using Default of localhost'
 
 datac, addrc = sockobjc.recvfrom(bufsize)
 
