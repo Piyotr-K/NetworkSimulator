@@ -23,10 +23,17 @@ print("Waiting on traffic from: ", portc, "& ", ports)
 
 if len(sys.argv) == 3:
     host = sys.argv[1]
+    if int(sys.argv[2]) == 0:
+        dropRate = 0
+    else:
+        dropRate = 100/int(sys.argv[2])
     print 'Random drop chance: ' + sys.argv[2] + '%'
 elif len(sys.argv) == 2:
+    if int(sys.argv[1]) == 0:
+        dropRate = 0
+    else:
+        dropRate = 100/int(sys.argv[1])
     print 'Random drop chance: ' + sys.argv[1] + '%'
-    dropRate = 100/int(sys.argv[1])
     print 'Using Default of localhost'
 
 datac, addrc = sockobjc.recvfrom(bufsize)
@@ -36,8 +43,11 @@ while (datac):
     packetList.append(packet)
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
-            if (random.randint(0, dropRate) == 1):
-                print "Packet dropped!"
+            if dropRate == 0:
+                if (random.randint(1, dropRate) == 1):
+                    print "Packet dropped!"
+                else:
+                    sockobjs.sendto(pckt.toString(), (host, ports))
             else:
                 sockobjs.sendto(pckt.toString(), (host, ports))
         packetList = []

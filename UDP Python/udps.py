@@ -2,6 +2,7 @@
 
 from socket import *
 from packet import Packet
+import sys
 import pickle
 
 host = "localhost"
