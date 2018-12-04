@@ -22,7 +22,7 @@ ackFound = 0
 sockobj = socket(AF_INET, SOCK_DGRAM)
 sockobj.bind(("", 0))
 
-#print("Client")
+print("Client")
 
 def openFile(filename):
     global f

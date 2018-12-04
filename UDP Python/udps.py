@@ -11,7 +11,7 @@ packetList = []
 sockobj = socket(AF_INET, SOCK_DGRAM)
 sockobj.bind(("", port))
 
-#print("Server")
+print("Server")
 
 print("waiting on port:", port)
 f = open("hello1.txt", 'wb')
