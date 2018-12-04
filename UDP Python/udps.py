@@ -2,11 +2,13 @@
 
 from socket import *
 from packet import Packet
+import sys
 import pickle
 
 host = "localhost"
 port = 8001
 bufsize = 1024
+packetList = []
 
 sockobj = socket(AF_INET, SOCK_DGRAM)
 sockobj.bind(("", port))
@@ -14,18 +16,28 @@ sockobj.bind(("", port))
 #print("Server")
 
 print("waiting on port:", port)
-f = open("hello1.txt", 'w')
+f = open("hello1.txt", 'wb')
+
+if len(sys.argv) == 2:
+    host = sys.argv[1]
+else:
+    print 'Using Default of localhost'
 
 data, addr = sockobj.recvfrom(bufsize)
 
 while (data):
-    packet = pickle.loads(data)
-    f.write(packet.getData().decode('utf-8'))
+    packet = Packet.decode(Packet(), data)
+    print 'Received Packet Type: ' + str(packet.getPacketType()) + ", Sequence Number: " + str(packet.getSeqNum())
+    packetList.append(packet)
+    f.write(packet.getData())
+    if (packet.getPacketType() == "EOT"):
+        for pckt in packetList:
+            ack = Packet("ACK", 1, pckt.getData(), pckt.getSeqNum())
+            ackStr = ack.toString()
+            sockobj.sendto(ackStr, addr)
+            print 'Sent Packet Type: ' + str(ack.getPacketType()) + ", Acknowledgement Number: " + str(ack.getAckNum())
+        packetList = []
+        sockobj.sendto("EOT", addr)
     data, addr = sockobj.recvfrom(bufsize)
 
-#print("\nReceived: ", data, "From: ", addr)
-
-#print("finished writing to file.")
 f.close()
-sockobj.sendto(b'Ack From Server', addr)
-#print("\nSent: ", "Server -> Network", "To: ", addr)
