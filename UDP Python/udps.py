@@ -14,7 +14,7 @@ sockobj.bind(("", port))
 #print("Server")
 
 print("waiting on port:", port)
-f = open("test1.png", 'wb')
+f = open("hello1.txt", 'wb')
 
 if len(sys.argv) == 2:
     host = sys.argv[1]

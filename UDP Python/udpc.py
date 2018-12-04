@@ -78,7 +78,7 @@ while (data):
                     break
             if (ackFound == 0):
                 toResend.append(pckt)
-
+                
         for x in range(0, len(toResend)):
             if (x == len(toResend)):
                 toResend[x].setPacketType("EOT")

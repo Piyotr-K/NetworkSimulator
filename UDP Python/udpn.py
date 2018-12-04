@@ -5,6 +5,7 @@ from packet import Packet
 import pickle
 from sys import getsizeof
 import sys
+import random
 
 host = "localhost"
 portc = 8000
@@ -25,7 +26,7 @@ if len(sys.argv) == 3:
     print 'Random drop chance: ' + sys.argv[2] + '%'
 elif len(sys.argv) == 2:
     print 'Random drop chance: ' + sys.argv[1] + '%'
-    dropChance = sys.argv[1]
+    dropRate = 100/int(sys.argv[1])
     print 'Using Default of localhost'
 
 datac, addrc = sockobjc.recvfrom(bufsize)
@@ -36,8 +37,11 @@ while (datac):
     packetList.append(packet)
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
-            sockobjs.sendto(pckt.toString(), (host, ports))
-            #print 'Sent Packet Type: ' + str(pckt.getPacketType()) + ", Sequence Number: " + str(pckt.getSeqNum())
+            if (random.randint(0, dropRate) == 1):
+                print "Packet dropped!"
+            else:
+                sockobjs.sendto(pckt.toString(), (host, ports))
+                #print 'Sent Packet Type: ' + str(pckt.getPacketType()) + ", Sequence Number: " + str(pckt.getSeqNum())
         packetList = []
         datas, addrs = sockobjs.recvfrom(bufsize)
         while (datas):
