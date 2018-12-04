@@ -8,6 +8,7 @@ host = "localhost"
 port = 8001
 bufsize = 1024
 packetList = []
+global f
 
 sockobj = socket(AF_INET, SOCK_DGRAM)
 sockobj.bind(("", port))
@@ -15,18 +16,18 @@ sockobj.bind(("", port))
 #print("Server")
 
 print("waiting on port:", port)
-f = open("test1.jpeg", 'wb')
 
+f = open('hello1.txt', 'wb')
 data, addr = sockobj.recvfrom(bufsize)
 
 while (data):
-    packet = pickle.loads(data)
+    packet = Packet.decode(Packet(), data)
     packetList.append(packet)
     f.write(packet.getData())
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
                 ack = Packet("ACK", 1, data, pckt.getSeqNum())
-                ackStr = pickle.dumps(ack)
+                ackStr = ack.toString()
                 sockobj.sendto(ackStr, addr)
         packetList = []
         sockobj.sendto("EOT", addr)

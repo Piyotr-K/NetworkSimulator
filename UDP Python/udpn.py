@@ -23,23 +23,23 @@ print("Waiting on traffic from: ", portc, "& ", ports)
 datac, addrc = sockobjc.recvfrom(bufsize)
 
 while (datac):
-    packet = pickle.loads(datac)
+    packet = Packet.decode(Packet(), datac)
     packetList.append(packet)
     print packet.getSeqNum()
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
-            sockobjs.sendto(pickle.dumps(pckt), (host, ports))
+            sockobjs.sendto(pckt.toString(), (host, ports))
         packetList = []
         datas, addrs = sockobjs.recvfrom(bufsize)
         while (datas):
             print "hi"
-            ack = pickle.loads(datas)
+            ack = Packet.decode(Packet(), datas)
             ackList.append(ack)
             datas, addrs = sockobjs.recvfrom(bufsize)
             if (datas == "EOT"):
                 break
         for acks in ackList:
-            sockobjc.sendto(pickle.dumps(acks), addrc)
+            sockobjc.sendto(acks.toString(), addrc)
         ackList = []
         sockobjc.sendto("EOT", addrc)
     datac, addrc = sockobjc.recvfrom(bufsize)
