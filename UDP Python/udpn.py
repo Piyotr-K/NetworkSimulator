@@ -23,38 +23,25 @@ print("Waiting on traffic from: ", portc, "& ", ports)
 datac, addrc = sockobjc.recvfrom(bufsize)
 
 while (datac):
-    packet = pickle.loads(datac)
+    packet = Packet.decode(Packet(), datac)
+    print 'Received Packet Type: ' + str(packet.getPacketType()) + ", Sequence Number: " + str(packet.getSeqNum())
     packetList.append(packet)
-    print packet.getSeqNum()
     if (packet.getPacketType() == "EOT"):
         for pckt in packetList:
-            sockobjs.sendto(pickle.dumps(pckt), (host, ports))
+            sockobjs.sendto(pckt.toString(), (host, ports))
+            print 'Sent Packet Type: ' + str(pckt.getPacketType()) + ", Sequence Number: " + str(pckt.getSeqNum())
         packetList = []
         datas, addrs = sockobjs.recvfrom(bufsize)
         while (datas):
-            print "hi"
-            ack = pickle.loads(datas)
+            ack = Packet.decode(Packet(), datas)
+            print 'Received Packet Type: ' + str(ack.getPacketType()) + ", Acknowledgement Number: " + str(ack.getAckNum())
             ackList.append(ack)
             datas, addrs = sockobjs.recvfrom(bufsize)
             if (datas == "EOT"):
                 break
         for acks in ackList:
-            sockobjc.sendto(pickle.dumps(acks), addrc)
+            sockobjc.sendto(acks.toString(), addrc)
+            print 'Sent Packet Type: ' + str(acks.getPacketType()) + ", Acknowledgement Number: " + str(acks.getAckNum())
         ackList = []
         sockobjc.sendto("EOT", addrc)
     datac, addrc = sockobjc.recvfrom(bufsize)
-
-f.close()
-
-
-#print packet.getData()
-#print("\nReceived: ", datac, "From: ", addrc)
-
-#sockobjs.sendto(datac, (host, ports))
-#print("\nSent: ", "Network -> Server", "To: ", host, ports)
-
-##datas, addrs = sockobjs.recvfrom(bufsize)
-#print("\nReceived: ", datas, "From: ", addrs)
-
-##sockobjc.sendto(b"Ack From Network", addrc)
-#print("\nSent: ", "Network -> Client", "To: ", addrc)
